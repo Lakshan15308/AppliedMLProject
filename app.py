@@ -44,4 +44,5 @@ st.write(f"**Predicted Fault Type:** {label_mapping[prediction]}")
 st.subheader("Prediction Probabilities")
 prob_df = pd.DataFrame([proba], columns=[label_mapping[i] for i in range(len(proba))])
 st.bar_chart(prob_df.T)
-                                                                                          
+
+st.write("Created by Lakshan Siriwardhana, Nishel Pirispulle, Tharanga Dissanayake & Lahiru Samaraweera")

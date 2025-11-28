@@ -7,96 +7,96 @@
 ##### This project focuses on building a Machine Learning-Based Industrial Fault Detection System using real-world sensor data.
 ##### The system classifies equipment conditions into:
 
-No Fault
+###### No Fault
 
-Bearing Fault
+###### Bearing Fault
 
-Overheating
+###### Overheating
 
 ### The workflow includes:
 
 #### Data preprocessing & visualization
 
-Outlier handling
+###### Outlier handling
 
-Class imbalance treatment (SMOTE)
+###### Class imbalance treatment (SMOTE)
 
-Dimensionality reduction (PCA)
+###### Dimensionality reduction (PCA)
 
-Model training (RandomForest, XGBoost, SVM)
+###### Model training (RandomForest, XGBoost, SVM)
 
-Model evaluation (RMSE, MAE, Accuracy, Confusion Matrix)
+###### Model evaluation (RMSE, MAE, Accuracy, Confusion Matrix)
 
-Interactive prediction app using Streamlit
+###### Interactive prediction app using Streamlit
 
 ### Project Structure
 
-AML_Project/
-│── data/
-│   ├── dataset.csv
-│
-│── notebooks/
-│   ├── EDA_and_Preprocessing.ipynb
-│   ├── Model_Training.ipynb
-│   ├── PCA_Clustering.ipynb
-│
-│── models/
-│   ├── fault_model.pkl
-│   └── scaler.pkl
-│
-│── app/
-│   ├── app.py                # Streamlit interface
-│
-│── README.md
-│── requirements.txt
-│── AML_Project.py            # (Converted from notebook)
+###### AML_Project/
+###### │── data/
+###### │   ├── dataset.csv
+###### │
+###### │── notebooks/
+###### │   ├── EDA_and_Preprocessing.ipynb
+###### │   ├── Model_Training.ipynb
+###### │   ├── PCA_Clustering.ipynb
+###### │
+###### │── models/
+###### │   ├── fault_model.pkl
+###### │   └── scaler.pkl
+###### │
+###### │── app/
+###### │   ├── app.py                # Streamlit interface
+###### │
+###### │── README.md
+###### │── requirements.txt
+###### │── AML_Project.py            # (Converted from notebook)
 
 ### How to Run the Project
 
 
-1. Clone the repository
-git clone <your-repo-url>
-cd AML_Project
+###### 1. Clone the repository
+###### git clone <your-repo-url>
+###### cd AML_Project
 
 
-2. Install requirements
-pip install -r requirements.txt
+###### 2. Install requirements
+###### pip install -r requirements.txt
 
 
-If you don’t have nbconvert installed:
+###### If you don’t have nbconvert installed:
 
-pip install nbconvert
+###### pip install nbconvert
 
-3. Convert Notebook to Python Script (Optional)
+###### 3. Convert Notebook to Python Script (Optional)
 
-If you want .py output:
+###### If you want .py output:
 
-jupyter nbconvert --to script AML_Project.ipynb
+###### jupyter nbconvert --to script AML_Project.ipynb
 
-4. Run Streamlit App
-cd app
-streamlit run app.py
+###### 4. Run Streamlit App
+###### cd app
+###### streamlit run app.py
 
 
-The interface will open in your browser.
+#### The interface will open in your browser.
 
 ### Features Implemented
 
 #### ✔ Data Preprocessing
 
-Missing value imputation
+###### Missing value imputation
 
-Outlier detection (IQR / Z-score)
+###### Outlier detection (IQR / Z-score)
 
-Scaling (StandardScaler)
+###### Scaling (StandardScaler)
 
-Normality testing (Shapiro–Wilk, QQ-plots)
+###### Normality testing (Shapiro–Wilk, QQ-plots)
 
 #### ✔ Handling Imbalanced Data
 
-Since the classes were in ratios like 60% / 30% / 8%, SMOTE was applied:
+###### Since the classes were in ratios like 60% / 30% / 8%, SMOTE was applied:
 
-from imblearn.over_sampling import SMOTE
+###### from imblearn.over_sampling import SMOTE
 
 #### ✔ PCA Visualization
 
@@ -170,4 +170,4 @@ Lakshan Siriwardhana, Nishel Pirispulle, Tharanga Dissanayake, Lahiru Samaraweer
 
 ### License
 
-This project is licensed under the MIT License.
+### This project is licensed under the MIT License.

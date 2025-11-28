@@ -7,27 +7,25 @@
 ##### This project focuses on building a Machine Learning-Based Industrial Fault Detection System using real-world sensor data.
 ##### The system classifies equipment conditions into:
 
-###### No Fault
+####### No Fault
 
-###### Bearing Fault
+####### Bearing Fault
 
-###### Overheating
-
-## The workflow includes:
+####### Overheating
 
 #### Data preprocessing & visualization
 
-###### Outlier handling (Duplicates, Null Values)
+####### Outlier handling (Duplicates, Null Values)
 
-###### Class imbalance treatment (SMOTE)
+####### Class imbalance treatment (SMOTE)
 
-###### Dimensionality reduction (PCA, T-sne and UMAP)
+####### Dimensionality reduction (PCA, T-sne and UMAP)
 
-###### Model training (RandomForest, XGBoost, SVM)
+####### Model training (RandomForest, XGBoost, SVM)
 
-###### Model evaluation (RMSE, MAE, Accuracy, Confusion Matrix)
+####### Model evaluation (RMSE, MAE, Accuracy, Confusion Matrix)
 
-###### Interactive prediction app using Streamlit
+####### Interactive prediction app using Streamlit
 
 ### How to Run the Project
 

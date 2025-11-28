@@ -168,6 +168,6 @@ streamlit run app/app.py
 
 Lakshan Siriwardhana, Nishel Pirispulle, Tharanga Dissanayake, Lahiru Samaraweera
 
-📜 License
+### License
 
 This project is licensed under the MIT License.

@@ -26,13 +26,13 @@ color_map = {
 # Streamlit Page Config
 # --------------------------------------------------
 st.set_page_config(
-    page_title="Industrial Fault Detection",
+    page_title="Industrial IOT Fault Detection Model",
     page_icon="⚙️",
     layout="centered"
 )
 
-st.title("⚙️ Industrial Fault Detection System")
-st.write("Monitor equipment health with real-time sensor simulation and ML prediction.")
+st.title("⚙️ Industrial IOT Fault Detection Model")
+st.write("Monitor equipment health with real-time sensor simulation and Machine Learning prediction.")
 
 st.markdown("---")
 
@@ -71,7 +71,7 @@ st.markdown("---")
 # OUTPUT SECTION – Prediction
 # --------------------------------------------------
 
-st.subheader("🧠 ML Prediction Result")
+st.subheader("🧠 Machine Learning Prediction Result")
 
 # Display result in a colored box
 st.markdown(

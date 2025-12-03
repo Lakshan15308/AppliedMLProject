@@ -3,7 +3,13 @@
 
 # <a href="https://colab.research.google.com/github/Nish-hub94/AppliedMLProject/blob/main/AML_project.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a>
 
-# In[53]:
+# # **Industrial IOT Fault Detection Model**
+# ##### The dataset contains 1000 raw data. They are taken from IIOT devices' sensors with an idea of creating a machine learning model for predictive maintenance and fault diagnosis.  
+# #### Contributed by: Lakshan Siriwardhana, Nishel Perispulle, Tharanga Dissanayake, Lahiru Samaraweera.
+
+# ## **Import required libraries**
+
+# In[1]:
 
 
 import pandas as pd
@@ -15,89 +21,163 @@ from scipy.stats import normaltest
 from scipy.stats import ttest_ind
 from scipy.stats import mannwhitneyu
 
-from sklearn.model_selection import train_test_split, StratifiedKFold, cross_validate
+from sklearn.model_selection import train_test_split, StratifiedKFold, cross_validate, GridSearchCV, learning_curve
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
 from sklearn.utils.class_weight import compute_class_weight
-
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
-#from xgboost import XGBClassifier
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-
-import numpy as np
-import seaborn as sns
-from matplotlib import pyplot as plt
-from sklearn.model_selection import train_test_split, GridSearchCV, learning_curve
-from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
-from sklearn.cluster import KMeans
-from sklearn.linear_model import LogisticRegression
+from xgboost import XGBClassifier
+from sklearn.manifold import TSNE
 
 
-# # **Data loading & Data Reading**
+# ## **Data loading & Data Reading**
 
-# In[54]:
+# In[2]:
 
 
 df = pd.read_csv('industrial_fault_detection_data_1000.csv', index_col=0, skipinitialspace='True')
+df
 
 
-# # **Data Pre-Processing and Feature Extraction**
+# ## **Data Pre-Processing** 
+# ### **Data Cleaning**
 
-# In[55]:
+# In[3]:
 
 
 ### First, We should get an idea about the Data and their relationship ###
-
 print(df.shape)
 print(df.duplicated().any()) # Duplicate value check
 print(df.isnull().values.any()) # Null Value Check  # No Null values are available.  
-print(df.columns)
 print(df.head())
 df.describe()
 
 
-# In[56]:
+# In[4]:
 
 
 # Map numeric labels to descriptive names
 label_mapping = {0: 'No Fault', 1: 'Bearing Fault', 2: 'Overheating'}
 df['Fault Type'] = df['Fault Label'].map(label_mapping)
 
+df.head()
 
-# In[57]:
+
+# ### **Feature Extraction**
+
+# In[5]:
 
 
-feature_cols = ['Vibration (mm/s)', 'Temperature (°C)', 'Pressure (bar)', 'RMS Vibration', 'Mean Temp']
-pair_df = df[feature_cols + ['Fault Label']]
+#Feature Extraction
+Feature_cols = ['Vibration (mm/s)', 'Temperature (°C)', 'Pressure (bar)', 'RMS Vibration', 'Mean Temp']
+pair_df = df[Feature_cols + ['Fault Label']]
+
+sns.pairplot(df, hue='Fault Label',diag_kind='kde', height=1.7)
+
+plt.show()  
+
+
+# In[6]:
+
+
+## According to the Pairplot, We do not see any variance and predictive values in "RMS Vibration" and "Mean Temp". 
+## "Vibration", "Temperature" and "Pressure" were taken as training features.
 
 Features= ['Vibration (mm/s)', 'Temperature (°C)', 'Pressure (bar)']
 pair_df2 = df[Features + ['Fault Label']]
 
-sns.pairplot(pair_df, hue='Fault Label',diag_kind='kde', height=1.7)
-
-plt.show()  
-
-## According to the Pairplot, Vibration Temporature and Pressure will be taken as training features,
-## because These three show clear separation between fault classes (0, 1, 2).
-
-
-# ### According to the Pairplot, Vibration Temporature and Pressure will be taken as training features, because These three show clear separation between fault classes (0, 1, 2).
-
-# In[58]:
-
-
-# Feature Extraction
 sns.pairplot(pair_df2, hue='Fault Label',diag_kind='kde', height=1.7)
 
 plt.show()  
+
+
+# ### **Check Data Imbalance**
+
+# In[7]:
+
+
+# Check Data imbalance
+#Pie Chart Showcase
+Faults = [
+    pair_df2["Vibration (mm/s)"].sum(),
+    pair_df2["Temperature (°C)"].sum(),
+    pair_df2["Pressure (bar)"].sum()
+]
+
+Labels = ['Vibration (mm/s)', 'Temperature (°C)', 'Pressure (bar)']
+
+plt.figure(figsize=(6,6))
+plt.pie(Faults, labels=Labels, autopct="%.1f%%", colors=["blue","green","yellow"])
+plt.title("Fault Type in Percentage")
+plt.show()
+
+counts = pair_df2['Fault Label'].value_counts(normalize=True)
+percent = (counts / counts.sum()) * 100
+
+print("Data Imbalance:")
+print(percent.round(2).astype(str) + " %")
+
+# This means the data is highly imbalanced (60/30/8).
+
+# Data imbalance in Plot output 
+plt.figure(figsize=(6,4))
+sns.countplot(data=df, x='Fault Type', hue='Fault Type', palette='coolwarm', legend=False)
+
+plt.title('Count of Each Fault Type')
+
+
+
+# ### **Quantitative Analysis**
+
+# In[8]:
+
+
+## Quantitative Analysis
+
+## Mean
+print("Mean \n", df.groupby('Fault Type').mean())
+
+print("----------------------------------------------------------------------------------------------------------------------------------------------")
+
+## Standard Deviation
+print("Standard Deviation \n", df.groupby('Fault Type').std()) 
+
+# The mean and standard deviation values further support understanding how features behave across different classes.
+plt.figure(figsize=(5,5))
+sns.boxplot(y='Vibration (mm/s)', x='Fault Label', data=pair_df2)
+plt.title("Boxplot Diagrum for Vibration")
+plt.ylabel("Vibration")
+plt.xlabel("Fault Label")
+plt.xticks(rotation=45)
+
+plt.show()
+
+sns.boxplot(y='Temperature (°C)', x='Fault Label', data=pair_df2)
+plt.title("Boxplot Diagrum for Temperature (°C)")
+plt.ylabel("Temperature (°C)")
+plt.xlabel("Fault Label")
+plt.xticks(rotation=45)
+plt.show()
+
+sns.boxplot(y='Pressure (bar)', x='Fault Label', data=pair_df2)
+plt.title("Boxplot Diagrum for Pressure")
+plt.ylabel("Pressure (bar)")
+plt.xlabel("Fault Label")
+plt.xticks(rotation=45)
+plt.show()
+
+print("Quantitative analysis of mean and standard deviation across fault types does not show a distinct difference among vibration, temperature and pressure patterns.")
+
+
+# In[9]:
+
 
 # Graph 1 – Sensor Correlation Heatmap
 plt.figure(figsize=(8,6))
@@ -106,51 +186,49 @@ plt.title('Sensor Correlation Heatmap')
 plt.show()
 
 
-# In[59]:
+# ### **Hypothesis Test - normaltest**
 
-
-# Check Data imbalance
-counts = pair_df2['Fault Label'].value_counts(normalize=True) * 100
-print("Data Imbalance =", counts) # This means the data is highly imbalanced (60/30/8).
-
-# Plot Example output 
-plt.figure(figsize=(6,4))
-sns.countplot(data= df, x='Fault Type', palette='coolwarm')
-plt.title('Count of Each Fault Type')
-plt.show()
-
-df
-
-
-# In[60]:
-
-
-## Quantitative analysis
-## Mean
-print("Mean \n", df.groupby('Fault Type').mean())
-## Standard Deviation
-print("Standard Deviation \n" , df.groupby('Fault Type').std())
-# the mean and standard deviation values further support the observations to validate relationships between features and fault types.
-
-
-# In[61]:
+# In[10]:
 
 
 # Hypothesis Test was performed to test whether the data were normally distributed or not.
-normaltest
+
 print(normaltest(df['Vibration (mm/s)']))
-alpha =0.5
-statistic, pvalue = normaltest(df['Vibration (mm/s)'])
+print(normaltest(df['Temperature (°C)']))
+print(normaltest(df['Pressure (bar)']))
 
-if pvalue<alpha:
-    print('Data is not normally distributed')
-else:
-    print('Data is not distributed')
+numeric_cols = ['Vibration (mm/s)', 'Temperature (°C)', 'Pressure (bar)']
+
+alpha = 0.05
+
+print("Normality Test Results (D’Agostino K² Test)")
+print("-----------------------------------------------------")
+
+for col in numeric_cols:
+    stat, p_value = normaltest(df[col])   # run test on each column
+    print(f"{col}: statistic = {stat:.4f}, p-value = {p_value:.6f}")
+
+    if p_value < alpha:
+        print(" → Reject Null Hypothesis: Data is **NOT normally distributed**\n")
+    else:
+        print(" → Fail to Reject Null: Data is **normally distributed**\n")
+
+# KDE Plot 1: Vibration ---
+plt.figure(figsize=(6,4))
+sns.kdeplot(df['Vibration (mm/s)'])
+sns.kdeplot(df['Temperature (°C)'], color='red')
+sns.kdeplot(df['Pressure (bar)'], color='green')
+plt.title("KDE Plot - Pressure (bar)")
+plt.xlabel("Pressure (bar)")
+plt.ylabel("Density")
+plt.grid(True)
+plt.show()
 
 
-# ### Since the Data is not normally distributed. We need to use non-parametric tests and transform the data
+# ### Since the Data is not normally distributed & imbalance. Do we need to use non-parametric tests and transformation?
+# ### **Mann-Whitney rank-test**
 
-# In[62]:
+# In[11]:
 
 
 # Mann-Whitney rank-test 
@@ -201,11 +279,10 @@ else:
     print("No significant difference between groups.")
 
 
-# In[63]:
+# ### **Data Splitting (Train & Test) & Scalling**
 
+# In[12]:
 
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 
 X = df[Features].values
 y = df['Fault Label'].values
@@ -220,34 +297,18 @@ X_val, X_test, y_val, y_test = train_test_split(
     X_temp, y_temp, test_size=0.5, random_state=42, stratify=y_temp
 )
 
-
-# In[64]:
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
-
-# 1. Select Features and Labels
-feature_cols = ['Vibration (mm/s)', 'Temperature (°C)', 'Pressure (bar)']
-X = df[feature_cols].values
-y = df['Fault Label'].values
-
-# 2. Train-Test Split (ALWAYS FIRST)
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.3, random_state=42, stratify=y
-)
-
-
-# 3. Standardization (fit on TRAIN only)
+# Standardization (fit on TRAIN only)
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# 4. PCA (fit ONLY on training data)
+
+# ### **Subspace projection (PCA Test)**
+
+# In[13]:
+
+
+#PCA (fit ONLY on training data)
 pca = PCA()
 X_train_pca = pca.fit_transform(X_train_scaled)
 X_test_pca = pca.transform(X_test_scaled)
@@ -298,7 +359,34 @@ plt.title('K-Means Clusters on PCA Components')
 plt.show()
 
 
-# In[65]:
+# In[14]:
+
+
+from sklearn.manifold import TSNE
+
+# TSNE Transformation
+tsne = TSNE(n_components=2, random_state=42, perplexity=30)
+X_train_tsne = tsne.fit_transform(X_train_scaled)
+
+# TSNE Visualization
+plt.figure(figsize=(6,5))
+for label in np.unique(y_train):
+    plt.scatter(
+        X_train_tsne[y_train == label, 0],
+        X_train_tsne[y_train == label, 1],
+        label=f"Fault {label}",
+        alpha=0.7
+    )
+
+plt.xlabel('TSNE 1')
+plt.ylabel('TSNE 2')
+plt.title('TSNE 2D Scatter Plot by Fault Type')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+# In[16]:
 
 
 fig, axes = plt.subplots(1, 3, figsize=(15, 5))
@@ -324,10 +412,8 @@ plt.show()
 
 # # **Model Creation**
 
-# In[66]:
+# In[17]:
 
-
-from sklearn.linear_model import LogisticRegression
 
 model = LogisticRegression()
 model.fit(X_train_pca, y_train)
@@ -335,11 +421,11 @@ model.fit(X_train_pca, y_train)
 y_pred = model.predict(X_test_pca)
 
 
-# In[67]:
+# In[ ]:
 
 
 # === Compute class weights (optional but explicit) ===
-from xgboost import XGBClassifier
+
 
 classes = np.unique(y_train)
 class_weights = compute_class_weight(class_weight='balanced', classes=classes, y=y_train)
@@ -478,10 +564,28 @@ elif best_name == 'LogisticRegression':
 ### 
 
 
-# In[68]:
+# In[ ]:
 
 
 import nbconvert
 
 get_ipython().system('jupyter nbconvert --to script AML_project.ipynb')
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
 

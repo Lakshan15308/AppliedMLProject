@@ -17,13 +17,13 @@
 
 ###### Outlier handling (Duplicates, Null Values)
 
-###### Class imbalance treatment (SMOTE)
+###### Class imbalance check and normality test
 
 ###### Dimensionality reduction (PCA, T-sne and UMAP)
 
-###### Model training (RandomForest, XGBoost, SVM)
+###### Model training (RandomForest, GBoost, SVM, Logistic Regression)
 
-###### Model evaluation (RMSE, MAE, Accuracy, Confusion Matrix)
+###### Model evaluation (Accuracy, Confusion Matrix)
 
 ###### Interactive prediction app using Streamlit
 
@@ -54,17 +54,15 @@
 ###### Several models trained and compared:
 
 ###### Random Forest
-###### XGBoost
+###### Gradient Boost
 ###### SVM
-###### Gaussian Mixture Models (for unsupervised)
+###### Logistic Regression
 
 ###### Best model saved as: fault_model.pkl (Gaussian Mixture Model)
 
 ### Model Evaluation
 
 ###### Confusion Matrix
-###### Classification Report
-###### ROC–AUC
 ###### Cross-validation
 
 ### Example Prediction Output
